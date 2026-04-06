@@ -15,31 +15,31 @@ export function ServicesSection() {
           }`}
         >
           <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-            Услуги
+            Возможности
           </h2>
-          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Наши компетенции</p>
+          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Всё для корпоративного хранения</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-x-16 md:gap-y-12 lg:gap-x-24">
           {[
             {
-              title: "Веб-разработка",
-              description: "Создание современных веб-приложений любой сложности",
+              title: "Безопасность данных",
+              description: "Шифрование AES-256, двухфакторная аутентификация и детальный журнал действий",
               direction: "top",
             },
             {
-              title: "UI/UX Дизайн",
-              description: "Проектирование удобных и красивых интерфейсов",
+              title: "Управление доступом",
+              description: "Гибкие роли и права доступа для сотрудников, отделов и внешних партнёров",
               direction: "right",
             },
             {
-              title: "Мобильные приложения",
-              description: "Кроссплатформенная разработка для iOS и Android",
+              title: "Интеграции",
+              description: "API и готовые коннекторы для 1С, Microsoft 365, Google Workspace и других систем",
               direction: "left",
             },
             {
-              title: "Консалтинг",
-              description: "Техническая экспертиза и стратегическое планирование",
+              title: "Масштабирование",
+              description: "От 10 до 10 000 пользователей без потери производительности — платите только за объём",
               direction: "bottom",
             },
           ].map((service, i) => (
