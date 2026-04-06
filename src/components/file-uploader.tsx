@@ -16,6 +16,7 @@ export function FileUploader() {
   const [loading, setLoading] = useState(true)
   const [files, setFiles] = useState<StoredFile[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const loadFiles = () => {
@@ -77,6 +78,26 @@ export function FileUploader() {
     e.preventDefault()
     setIsDragging(false)
     if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
+  }
+
+  const deleteFile = async (file: StoredFile) => {
+    if (!confirm(`Удалить "${file.name}"?`)) return
+    setDeletingId(file.id)
+    try {
+      const res = await fetch(func2url["delete-file"], {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: file.id }),
+      })
+      const raw = await res.text()
+      const data = typeof raw === "string" ? JSON.parse(raw) : raw
+      if (!res.ok) throw new Error(data.error || "Ошибка удаления")
+      setFiles((prev) => prev.filter((f) => f.id !== file.id))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка удаления")
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const formatSize = (bytes: number) => {
@@ -161,16 +182,29 @@ export function FileUploader() {
                   <span className="truncate text-sm text-foreground">{f.name}</span>
                   <span className="shrink-0 font-mono text-xs text-foreground/40">{formatSize(f.size)}</span>
                 </div>
-                <a
-                  href={f.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="ml-4 flex shrink-0 items-center gap-1 font-mono text-xs text-foreground/50 transition-colors hover:text-foreground"
-                >
-                  <Icon name="ExternalLink" size={12} />
-                  Открыть
-                </a>
+                <div className="ml-4 flex shrink-0 items-center gap-3">
+                  <a
+                    href={f.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 font-mono text-xs text-foreground/50 transition-colors hover:text-foreground"
+                  >
+                    <Icon name="ExternalLink" size={12} />
+                    Открыть
+                  </a>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteFile(f) }}
+                    disabled={deletingId === f.id}
+                    className="flex items-center gap-1 font-mono text-xs text-red-400/60 transition-colors hover:text-red-400 disabled:opacity-40"
+                  >
+                    {deletingId === f.id
+                      ? <Icon name="Loader2" size={12} className="animate-spin" />
+                      : <Icon name="Trash2" size={12} />
+                    }
+                    Удалить
+                  </button>
+                </div>
               </div>
             ))}
           </div>
