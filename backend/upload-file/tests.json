@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Missing file returns 400",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "test.txt"},
+      "expectedStatus": 400,
+      "expectedBody": {"error": "Файл не передан"},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

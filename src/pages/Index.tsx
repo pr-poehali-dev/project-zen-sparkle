@@ -1,8 +1,8 @@
 import { WorkSection } from "@/components/sections/work-section"
 import { ServicesSection } from "@/components/sections/services-section"
 import { AboutSection } from "@/components/sections/about-section"
-import { MagneticButton } from "@/components/magnetic-button"
 import { GrainOverlay } from "@/components/grain-overlay"
+import { FileUploader } from "@/components/file-uploader"
 
 export default function Index() {
   const scrollToSection = (id: string) => {
@@ -49,34 +49,24 @@ export default function Index() {
           ))}
         </div>
 
-        <MagneticButton variant="secondary" onClick={() => scrollToSection("hero")}>
-          Загрузить файлы
-        </MagneticButton>
       </nav>
 
       {/* Sections */}
       <div className="relative z-10">
         {/* Hero */}
-        <section id="hero" className="flex min-h-screen flex-col items-start justify-center px-12 pt-20">
-          <div className="max-w-3xl">
+        <section id="hero" className="flex min-h-screen flex-col items-center justify-center px-12 pt-20">
+          <div className="mb-12 text-center">
             <div className="mb-4 inline-block rounded-full border border-foreground/20 bg-foreground/10 px-4 py-1.5">
               <p className="font-mono text-xs text-foreground/80">Облачное хранилище</p>
             </div>
-            <h1 className="mb-6 font-sans text-7xl font-light leading-[1.1] tracking-tight text-foreground lg:text-8xl">
+            <h1 className="mb-4 font-sans text-6xl font-light leading-[1.1] tracking-tight text-foreground lg:text-7xl">
               Просто облако для ваших файлов
             </h1>
-            <p className="mb-10 max-w-xl text-xl leading-relaxed text-foreground/70">
-              Загружайте, храните и делитесь файлами. Всё просто и доступно с любого устройства.
+            <p className="text-lg leading-relaxed text-foreground/60">
+              Перетащите файлы или нажмите — и они уже в облаке
             </p>
-            <div className="flex items-center gap-4">
-              <MagneticButton size="lg" variant="primary">
-                Загрузить файлы
-              </MagneticButton>
-              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection("how-it-works")}>
-                Как это работает
-              </MagneticButton>
-            </div>
           </div>
+          <FileUploader />
         </section>
 
         {/* For Whom */}
