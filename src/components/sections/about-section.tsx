@@ -19,11 +19,11 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
               }`}
             >
               <h2 className="mb-3 font-sans text-3xl font-light leading-[1.1] tracking-tight text-foreground md:mb-4 md:text-6xl lg:text-7xl">
-                Надёжное
+                Место для
                 <br />
-                хранилище
+                всего
                 <br />
-                <span className="text-foreground/40">для бизнеса</span>
+                <span className="text-foreground/40">что важно</span>
               </h2>
             </div>
 
@@ -34,10 +34,10 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
               style={{ transitionDelay: "200ms" }}
             >
               <p className="max-w-md text-sm leading-relaxed text-foreground/90 md:text-lg">
-                Мы строим инфраструктуру хранения данных, которой доверяют компании от малого бизнеса до enterprise.
+                Документы, фото, видео, архивы — всё в одном месте. Никаких флешек и переполненных почтовых ящиков.
               </p>
               <p className="max-w-md text-sm leading-relaxed text-foreground/90 md:text-lg">
-                Наш приоритет — безопасность, скорость и простота: ваши данные всегда под контролем и доступны с любого устройства.
+                Работает быстро, хранит надёжно, делится легко.
               </p>
             </div>
           </div>
@@ -45,9 +45,9 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
           {/* Right side - Stats with creative layout */}
           <div className="flex flex-col justify-center space-y-6 md:space-y-12">
             {[
-              { value: "500+", label: "Компаний", sublabel: "Доверяют нам свои данные", direction: "right" },
-              { value: "99.9%", label: "Uptime", sublabel: "Гарантированная доступность", direction: "left" },
-              { value: "256-bit", label: "Шифрование", sublabel: "Военный стандарт безопасности", direction: "right" },
+              { value: "∞", label: "Хранилище", sublabel: "Без ограничений по объёму", direction: "right" },
+              { value: "1 клик", label: "Доступ", sublabel: "Откройте с любого устройства", direction: "left" },
+              { value: "0", label: "Лишнего", sublabel: "Просто загрузи и пользуйся", direction: "right" },
             ].map((stat, i) => {
               const getRevealClass = () => {
                 if (!isVisible) {
@@ -84,10 +84,10 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
           style={{ transitionDelay: "750ms" }}
         >
           <MagneticButton size="lg" variant="primary" onClick={() => scrollToSection?.(4)}>
-            Подключить хранилище
+            Начать бесплатно
           </MagneticButton>
-          <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection?.(1)}>
-            Примеры клиентов
+          <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection?.(2)}>
+            Как это работает
           </MagneticButton>
         </div>
       </div>

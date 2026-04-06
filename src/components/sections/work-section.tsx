@@ -15,32 +15,32 @@ export function WorkSection() {
           }`}
         >
           <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-            Кейсы
+            Для кого
           </h2>
-          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Истории успеха клиентов</p>
+          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Подходит всем</p>
         </div>
 
         <div className="space-y-6 md:space-y-8">
           {[
             {
               number: "01",
-              title: "СтройГрупп",
-              category: "Единое хранилище проектной документации · 500 сотрудников",
-              year: "2024",
+              title: "Команды",
+              category: "Общие папки, совместная работа над файлами",
+              year: "",
               direction: "left",
             },
             {
               number: "02",
-              title: "МедТехника",
-              category: "Безопасный обмен данными между клиниками · HIPAA",
-              year: "2024",
+              title: "Фрилансеры",
+              category: "Портфолио, проекты, клиентские материалы",
+              year: "",
               direction: "right",
             },
             {
               number: "03",
-              title: "ЛогоПро",
-              category: "Архив транспортных накладных и отчётности · 1 ТБ/мес",
-              year: "2023",
+              title: "Личное использование",
+              category: "Фото, документы, резервные копии",
+              year: "",
               direction: "left",
             },
           ].map((project, i) => (

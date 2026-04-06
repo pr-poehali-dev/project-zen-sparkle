@@ -15,31 +15,31 @@ export function ServicesSection() {
           }`}
         >
           <h2 className="mb-2 font-sans text-5xl font-light tracking-tight text-foreground md:text-6xl lg:text-7xl">
-            Возможности
+            Как работает
           </h2>
-          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Всё для корпоративного хранения</p>
+          <p className="font-mono text-sm text-foreground/60 md:text-base">/ Просто и без лишнего</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-x-16 md:gap-y-12 lg:gap-x-24">
           {[
             {
-              title: "Безопасность данных",
-              description: "Шифрование AES-256, двухфакторная аутентификация и детальный журнал действий",
+              title: "Загрузите файлы",
+              description: "Перетащите файлы в браузер или загрузите с телефона — любые форматы",
               direction: "top",
             },
             {
-              title: "Управление доступом",
-              description: "Гибкие роли и права доступа для сотрудников, отделов и внешних партнёров",
+              title: "Организуйте",
+              description: "Папки, теги, поиск — найдёте нужное за секунды",
               direction: "right",
             },
             {
-              title: "Интеграции",
-              description: "API и готовые коннекторы для 1С, Microsoft 365, Google Workspace и других систем",
+              title: "Поделитесь",
+              description: "Отправьте ссылку коллеге или клиенту — без регистрации и лишних шагов",
               direction: "left",
             },
             {
-              title: "Масштабирование",
-              description: "От 10 до 10 000 пользователей без потери производительности — платите только за объём",
+              title: "Доступ везде",
+              description: "Компьютер, планшет, телефон — файлы всегда с вами",
               direction: "bottom",
             },
           ].map((service, i) => (

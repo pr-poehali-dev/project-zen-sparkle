@@ -44,11 +44,11 @@ export function ContactSection() {
               }`}
             >
               <h2 className="mb-2 font-sans text-4xl font-light leading-[1.05] tracking-tight text-foreground md:mb-3 md:text-7xl lg:text-8xl">
-                Начните
+                Напишите
                 <br />
-                сегодня
+                нам
               </h2>
-              <p className="font-mono text-xs text-foreground/60 md:text-base">/ Подключитесь за 24 часа</p>
+              <p className="font-mono text-xs text-foreground/60 md:text-base">/ Ответим быстро</p>
             </div>
 
             <div className="space-y-4 md:space-y-8">
