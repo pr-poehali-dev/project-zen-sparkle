@@ -3,11 +3,11 @@ import os
 import base64
 import uuid
 import boto3
-from datetime import datetime
+import psycopg2
 
 
 def handler(event: dict, context) -> dict:
-    """Загрузка файла в S3 хранилище"""
+    """Загрузка файла в S3 и сохранение метаданных в БД"""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -47,23 +47,36 @@ def handler(event: dict, context) -> dict:
         aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
     )
 
+    # Без Metadata — там нельзя кириллицу
     s3.put_object(
         Bucket='files',
         Key=key,
         Body=file_bytes,
-        ContentType=content_type,
-        Metadata={'original_name': file_name}
+        ContentType=content_type
     )
 
     cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+    size = len(file_bytes)
+
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO files (name, key, url, size) VALUES (%s, %s, %s, %s) RETURNING id",
+        (file_name, key, cdn_url, size)
+    )
+    file_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
 
     return {
         'statusCode': 200,
         'headers': {'Access-Control-Allow-Origin': '*'},
         'body': json.dumps({
+            'id': file_id,
             'url': cdn_url,
             'name': file_name,
             'key': key,
-            'size': len(file_bytes)
+            'size': size
         })
     }
