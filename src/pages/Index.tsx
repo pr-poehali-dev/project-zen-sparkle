@@ -1,88 +1,52 @@
-import { WorkSection } from "@/components/sections/work-section"
-import { ServicesSection } from "@/components/sections/services-section"
-import { AboutSection } from "@/components/sections/about-section"
-import { GrainOverlay } from "@/components/grain-overlay"
 import { FileUploader } from "@/components/file-uploader"
 
 export default function Index() {
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: "smooth" })
-  }
-
   return (
     <main className="min-h-screen w-full bg-background text-foreground">
-      <GrainOverlay />
 
-      {/* Static gradient background */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-br from-[#0a0a1a] via-[#0d1a3a] to-[#0a0a1a]" />
-      <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_60%_20%,rgba(18,117,216,0.25)_0%,transparent_60%)]" />
-      <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_20%_80%,rgba(225,145,54,0.12)_0%,transparent_50%)]" />
+      {/* Background glows */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(24,144,255,0.15),transparent)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(24,144,255,0.3)] to-transparent" />
+      </div>
 
       {/* Nav */}
-      <nav className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-foreground/10 bg-background/60 px-12 py-4 backdrop-blur-md">
-        <button
-          onClick={() => scrollToSection("hero")}
-          className="flex items-center gap-2"
-        >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground/15">
-            <span className="font-sans text-lg font-bold text-foreground">B</span>
+      <nav className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/5 bg-background/80 px-8 py-4 backdrop-blur-xl">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/40 bg-primary/10">
+            <span className="font-mono text-sm font-bold text-primary">B</span>
           </div>
-          <span className="font-sans text-lg font-semibold tracking-tight text-foreground">Biblioteca_Inform.ru</span>
-        </button>
-
-        <div className="flex items-center gap-8">
-          {[
-            { label: "Главная", id: "hero" },
-            { label: "Для кого", id: "for-whom" },
-            { label: "Как работает", id: "how-it-works" },
-            { label: "О нас", id: "about" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className="group relative font-sans text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
-            >
-              {item.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-foreground transition-all duration-300 group-hover:w-full" />
-            </button>
-          ))}
+          <span className="font-mono text-sm font-medium tracking-wide text-white">
+            Biblioteca_Inform<span className="text-primary">.ru</span>
+          </span>
         </div>
-
+        <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1">
+          <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="font-mono text-xs text-primary/80">online</span>
+        </div>
       </nav>
 
-      {/* Sections */}
-      <div className="relative z-10">
-        {/* Hero */}
-        <section id="hero" className="flex min-h-screen flex-col items-center justify-center px-12 pt-20">
-          <div className="mb-12 text-center">
-            <div className="mb-4 inline-block rounded-full border border-foreground/20 bg-foreground/10 px-4 py-1.5">
-              <p className="font-mono text-xs text-foreground/80">Облачное хранилище</p>
-            </div>
-            <h1 className="mb-4 font-sans text-6xl font-light leading-[1.1] tracking-tight text-foreground lg:text-7xl">
-              Просто облако для ваших файлов
+      {/* Main content */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 pt-16">
+        <div className="w-full max-w-2xl">
+
+          {/* Header */}
+          <div className="mb-10 text-center">
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-primary/60">
+              облачное хранилище
+            </p>
+            <h1 className="mb-3 font-sans text-4xl font-light tracking-tight text-white">
+              Ваши файлы всегда под рукой
             </h1>
-            <p className="text-lg leading-relaxed text-foreground/60">
-              Перетащите файлы или нажмите — и они уже в облаке
+            <p className="font-mono text-sm text-white/30">
+              загрузите, откройте или скачайте в любой момент
             </p>
           </div>
+
+          {/* Uploader */}
           <FileUploader />
-        </section>
 
-        {/* For Whom */}
-        <section id="for-whom">
-          <WorkSection />
-        </section>
-
-        {/* How it works */}
-        <section id="how-it-works">
-          <ServicesSection />
-        </section>
-
-        {/* About */}
-        <section id="about">
-          <AboutSection />
-        </section>
+        </div>
       </div>
     </main>
   )

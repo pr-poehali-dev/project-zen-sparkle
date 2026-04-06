@@ -10,6 +10,22 @@ interface StoredFile {
   created_at: string
 }
 
+const FILE_ICONS: Record<string, string> = {
+  pdf: "FileText",
+  doc: "FileText", docx: "FileText",
+  xls: "FileSpreadsheet", xlsx: "FileSpreadsheet",
+  ppt: "FileText", pptx: "FileText",
+  jpg: "Image", jpeg: "Image", png: "Image", gif: "Image", webp: "Image", svg: "Image",
+  mp4: "Film", mov: "Film", avi: "Film", mkv: "Film",
+  mp3: "Music", wav: "Music",
+  zip: "Archive", rar: "Archive", "7z": "Archive",
+}
+
+function getFileIcon(name: string): string {
+  const ext = name.split(".").pop()?.toLowerCase() || ""
+  return FILE_ICONS[ext] || "File"
+}
+
 export function FileUploader() {
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -34,7 +50,6 @@ export function FileUploader() {
   useEffect(() => { loadFiles() }, [])
 
   const uploadFile = async (file: File): Promise<StoredFile> => {
-    // Шаг 1: получаем presigned URL от бэкенда
     const res = await fetch(func2url["get-upload-url"], {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -44,7 +59,6 @@ export function FileUploader() {
     const data = typeof raw === "string" ? JSON.parse(raw) : raw
     if (!res.ok) throw new Error(data.error || "Ошибка получения URL")
 
-    // Шаг 2: загружаем файл напрямую в S3 через presigned URL
     const uploadRes = await fetch(data.upload_url, {
       method: "PUT",
       headers: { "Content-Type": file.type || "application/octet-stream" },
@@ -74,14 +88,8 @@ export function FileUploader() {
     }
   }, [])
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
-  }
-
   const deleteFile = async (file: StoredFile) => {
-    if (!confirm(`Удалить "${file.name}"?`)) return
+    if (!confirm(`Удалить «${file.name}»?`)) return
     setDeletingId(file.id)
     try {
       const res = await fetch(func2url["delete-file"], {
@@ -100,6 +108,23 @@ export function FileUploader() {
     }
   }
 
+  const downloadFile = async (file: StoredFile) => {
+    const res = await fetch(file.url)
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = file.name
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
+  }
+
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} Б`
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`
@@ -107,31 +132,32 @@ export function FileUploader() {
   }
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="w-full space-y-4">
+
       {/* Drop zone */}
       <div
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={onDrop}
         onClick={() => !uploading && inputRef.current?.click()}
-        className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-16 transition-all duration-200 ${
+        className={`group relative flex cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border py-12 transition-all duration-300 ${
           isDragging
-            ? "border-foreground/60 bg-foreground/10"
-            : "border-foreground/20 bg-foreground/5 hover:border-foreground/40"
-        } ${uploading ? "cursor-wait opacity-70" : ""}`}
+            ? "border-primary bg-primary/10 shadow-[0_0_30px_rgba(24,144,255,0.2)]"
+            : "border-white/8 bg-white/3 hover:border-primary/40 hover:bg-primary/5 hover:shadow-[0_0_20px_rgba(24,144,255,0.1)]"
+        } ${uploading ? "cursor-wait" : ""}`}
       >
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-foreground/10">
+        <div className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 ${isDragging ? "border-primary/60 bg-primary/20" : "border-white/10 bg-white/5 group-hover:border-primary/40 group-hover:bg-primary/10"}`}>
           {uploading
-            ? <Icon name="Loader2" size={28} className="animate-spin text-foreground/60" />
-            : <Icon name="Upload" size={28} className="text-foreground/60" />
+            ? <Icon name="Loader2" size={22} className="animate-spin text-primary" />
+            : <Icon name="Upload" size={22} className={`transition-colors ${isDragging ? "text-primary" : "text-white/40 group-hover:text-primary"}`} />
           }
         </div>
         <div className="text-center">
-          <p className="text-lg font-light text-foreground">
-            {uploading ? "Загружаем..." : "Перетащите файлы сюда"}
+          <p className="text-sm font-medium text-white/70">
+            {uploading ? "Загружаем файлы..." : isDragging ? "Отпустите для загрузки" : "Перетащите файлы сюда"}
           </p>
-          <p className="mt-1 font-mono text-sm text-foreground/50">
-            или нажмите для выбора · фото, видео, документы
+          <p className="mt-0.5 font-mono text-xs text-white/25">
+            {uploading ? "пожалуйста, подождите" : "или нажмите для выбора"}
           </p>
         </div>
         <input
@@ -143,66 +169,95 @@ export function FileUploader() {
         />
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2">
+        <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/8 px-4 py-3">
           <Icon name="AlertCircle" size={14} className="shrink-0 text-red-400" />
-          <p className="font-mono text-sm text-red-400">{error}</p>
+          <p className="font-mono text-xs text-red-400">{error}</p>
+          <button onClick={() => setError(null)} className="ml-auto text-red-400/50 hover:text-red-400">
+            <Icon name="X" size={12} />
+          </button>
         </div>
       )}
 
       {/* Files list */}
-      <div className="mt-6">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="font-mono text-xs text-foreground/50">
-            {loading ? "Загрузка..." : `Файлов в хранилище: ${files.length}`}
-          </p>
-          {!loading && (
-            <button onClick={loadFiles} className="font-mono text-xs text-foreground/40 transition-colors hover:text-foreground/70">
-              Обновить
-            </button>
-          )}
+      <div className="rounded-2xl border border-white/5 bg-white/2 overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-white/5 px-5 py-3">
+          <div className="flex items-center gap-2">
+            <Icon name="FolderOpen" size={13} className="text-primary/60" />
+            <span className="font-mono text-xs text-white/40">
+              {loading ? "загрузка..." : `${files.length} ${files.length === 1 ? "файл" : files.length >= 2 && files.length <= 4 ? "файла" : "файлов"}`}
+            </span>
+          </div>
+          <button
+            onClick={loadFiles}
+            disabled={loading}
+            className="flex items-center gap-1.5 rounded-lg px-2 py-1 font-mono text-xs text-white/25 transition-colors hover:text-primary/70 disabled:opacity-40"
+          >
+            <Icon name={loading ? "Loader2" : "RefreshCw"} size={11} className={loading ? "animate-spin" : ""} />
+            обновить
+          </button>
         </div>
 
+        {/* List */}
         {loading ? (
-          <div className="flex items-center gap-2 text-foreground/40">
-            <Icon name="Loader2" size={14} className="animate-spin" />
-            <span className="font-mono text-xs">Загрузка списка...</span>
+          <div className="flex items-center justify-center gap-2 py-10 text-white/20">
+            <Icon name="Loader2" size={16} className="animate-spin" />
+            <span className="font-mono text-xs">загрузка списка...</span>
           </div>
         ) : files.length === 0 ? (
-          <p className="font-mono text-xs text-foreground/30">Пока нет файлов — загрузите первый</p>
+          <div className="flex flex-col items-center justify-center gap-2 py-12 text-white/15">
+            <Icon name="CloudOff" size={28} />
+            <p className="font-mono text-xs">хранилище пустое</p>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="divide-y divide-white/5">
             {files.map((f) => (
               <div
                 key={f.id}
-                className="flex items-center justify-between rounded-lg border border-foreground/10 bg-foreground/5 px-4 py-3"
+                className="group flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-white/2"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  <Icon name="File" size={16} className="shrink-0 text-foreground/50" />
-                  <span className="truncate text-sm text-foreground">{f.name}</span>
-                  <span className="shrink-0 font-mono text-xs text-foreground/40">{formatSize(f.size)}</span>
+                {/* Icon */}
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/8 bg-white/4">
+                  <Icon name={getFileIcon(f.name)} size={14} className="text-primary/60" />
                 </div>
-                <div className="ml-4 flex shrink-0 items-center gap-3">
+
+                {/* Name + size */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm text-white/80">{f.name}</p>
+                  <p className="font-mono text-xs text-white/25">{formatSize(f.size)}</p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button
+                    onClick={() => downloadFile(f)}
+                    title="Скачать"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/40 transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                  >
+                    <Icon name="Download" size={13} />
+                  </button>
                   <a
                     href={f.url}
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1 font-mono text-xs text-foreground/50 transition-colors hover:text-foreground"
+                    title="Открыть"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/40 transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
                   >
-                    <Icon name="ExternalLink" size={12} />
-                    Открыть
+                    <Icon name="ExternalLink" size={13} />
                   </a>
                   <button
-                    onClick={(e) => { e.stopPropagation(); deleteFile(f) }}
+                    onClick={() => deleteFile(f)}
                     disabled={deletingId === f.id}
-                    className="flex items-center gap-1 font-mono text-xs text-red-400/60 transition-colors hover:text-red-400 disabled:opacity-40"
+                    title="Удалить"
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/40 transition-all hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-40"
                   >
                     {deletingId === f.id
-                      ? <Icon name="Loader2" size={12} className="animate-spin" />
-                      : <Icon name="Trash2" size={12} />
+                      ? <Icon name="Loader2" size={13} className="animate-spin" />
+                      : <Icon name="Trash2" size={13} />
                     }
-                    Удалить
                   </button>
                 </div>
               </div>
