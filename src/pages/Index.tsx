@@ -26,9 +26,9 @@ export default function Index() {
           className="flex items-center gap-2"
         >
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-foreground/15">
-            <span className="font-sans text-lg font-bold text-foreground">И</span>
+            <span className="font-sans text-lg font-bold text-foreground">B</span>
           </div>
-          <span className="font-sans text-lg font-semibold tracking-tight text-foreground">Информатика Хранилище</span>
+          <span className="font-sans text-lg font-semibold tracking-tight text-foreground">Biblioteca_Inform.ru</span>
         </button>
 
         <div className="flex items-center gap-8">
